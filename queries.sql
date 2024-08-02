@@ -19,20 +19,20 @@ VALUES('Class101', 350),
         ('Class105', 600);
 
 -- VALUER FOR STUDENT TABLE
-INSERT INTO Students (FirstName, LastName, DOB)
-VALUES ('Hans Raj', 'Sahoo', '2018-02-23'),
-        ('Kartik', 'Malik', '2018-01-12'),
-        ('Adaysha', 'Priyadarshini', '2019-4-14'),
-        ('Biraj', 'Behera', '2020-01-4'),
-        ('Nibedita', 'Malik', '2020-2-6'),
-        ('Swadhin', 'Malik', '2020-01-15'),
-        ('Rudra Prasad', 'Sahoo', '2018-12-28'),
-        ('Abhimany', 'Padhi', '2019-03-5'),
-        ('Gudi', 'Sethy', '2020-05-16'),
-        ('Sai Samarth', 'Sahoo', '2019-06-09'),
-        ('Chandrans', 'Mohanty', '2019-10-15'),
-        ('Sudipt', 'Jena', '2020-10-07'),
-        ('Sai Subham', 'Biswal', '2018-11-21');
+INSERT INTO Students (FirstName, LastName, DOB, Class)
+VALUES ('Hans Raj', 'Sahoo', '2018-02-23', 'Class101'),
+        ('Kartik', 'Malik', '2018-01-12', 'Class101'),
+        ('Adaysha', 'Priyadarshini', '2019-4-14', 'Class101'),
+        ('Biraj', 'Behera', '2020-01-4', 'Class102'),
+        ('Nibedita', 'Malik', '2020-2-6', 'Class103'),
+        ('Swadhin', 'Malik', '2020-01-15', 'Class102'),
+        ('Rudra Prasad', 'Sahoo', '2018-12-28', 'Class102'),
+        ('Abhimany', 'Padhi', '2019-03-5', 'Class103'),
+        ('Gudi', 'Sethy', '2020-05-16', 'Class104'),
+        ('Sai Samarth', 'Sahoo', '2019-06-09', 'Class104'),
+        ('Chandrans', 'Mohanty', '2019-10-15', 'Class103'),
+        ('Sudipt', 'Jena', '2020-10-07', 'Class105'),
+        ('Sai Subham', 'Biswal', '2018-11-21', 'Class105');
 
 -- FEE TABLE
 INSERT INTO Fees (StudentID, MonthYear, TutionFee, TransportFee, OtherFee)
@@ -99,10 +99,16 @@ DROP TRIGGER before_payment_insert;
 DROP TRIGGER paid_amount_update;
 DROP TRIGGER after_payment_update;
 
-
+TRUNCATE TABLE Students;
 TRUNCATE TABLE Fees;
 TRUNCATE TABLE Payments;
 TRUNCATE TABLE PaidStatus;
+
+SET foreign_key_checks = 0;
+, 'Class101'
+
+
+DELETE FROM Students;
 
 DELETE FROM Payments WHERE StudentID = 1;
 DELETE FROM Fees WHERE StudentID = 1;
