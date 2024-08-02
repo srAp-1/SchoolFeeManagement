@@ -10,6 +10,14 @@ DROP TABLE Transport,Payments, Fees, Parents, Students;
 DROP TABLE Students;
 
 
+-- Records for Classes Table
+INSERT INTO Classes(ClassName, ClassFee)
+VALUES('Class101', 350),
+        ('Class102', 450),
+        ('Class103', 500),
+        ('Class104', 550),
+        ('Class105', 600);
+
 -- VALUER FOR STUDENT TABLE
 INSERT INTO Students (FirstName, LastName, DOB)
 VALUES ('Hans Raj', 'Sahoo', '2018-02-23'),
@@ -61,6 +69,7 @@ DESCRIBE Payments;
 
 
 -- Show Tables
+SELECT * FROM Classes;
 SELECT * FROM Fees;
 SELECT * FROM Students;
 SELECT * FROM Parents;
@@ -120,6 +129,9 @@ ADD COLUMN Total DECIMAL(10, 2);
 
 ALTER TABLE Payments 
 ADD COLUMN Discount DECIMAL(10, 2) DEFAULT 0 AFTER TotalAmount;
+
+ALTER TABLE Students
+ADD COLUMN Class VARCHAR(20);
 
  
 

@@ -4,6 +4,9 @@ This is a MySQL database schema for a comprehensive school fee management system
 
 ## Tables
 
+7. **Classes**: Stores information about different classes and their associated fees.
+   - Includes: ClassName, ClassFee
+
 1. **Students**: Stores basic information about students.
    - Includes: StudentID, FirstName, LastName, Date of Birth
 
@@ -23,6 +26,14 @@ This is a MySQL database schema for a comprehensive school fee management system
    - Includes: PaymentID, StudentID, MonthYear, Outstanding, LastPaid, Pending
 
 ## How It Works
+
+### Class Fee Assignment
+
+1. When a new student is inserted into the `Students` table:
+   - A trigger automatically creates a fee record in the `Fees` table.
+   - The trigger retrieves the appropriate fee amount from the `Classes` table based on the student's assigned class.
+   - This ensures that each student is automatically assigned the correct tuition fee for their class.
+
 
 ### Fee Calculation
 
@@ -56,6 +67,9 @@ This is a MySQL database schema for a comprehensive school fee management system
 
 ## Key Features
 
+- **Automatic Class Fee Assignment**: The system automatically assigns the correct tuition fee to new students based on their class, reducing manual data entry and potential errors.
+
+
 - **Automatic Total Calculation**: The system automatically calculates the total fee for each student, considering tuition, transport, and other fees.
 
 - **Pending Amount Tracking**: It keeps track of pending amounts from previous months, ensuring that old dues are not forgotten.
@@ -70,12 +84,18 @@ This is a MySQL database schema for a comprehensive school fee management system
 
 The system uses several triggers to automate calculations and updates:
 
-1. `calculate_total_before_insert` and `calcualte_total_before_update`: Calculate total fee before inserting or updating fee records.
-2. `after_fees_insert`: Creates a payment record when a new fee is added.
-3. `after_fees_update`: Updates payment records when fees are modified.
-4. `before_payment_insert`: Calculates pending amounts considering previous unpaid fees.
-5. `paid_amount_update`: Updates pending amount when a payment is made.
-6. `after_payment_update`: Updates the paid status record after a payment is made or updated.
+1. `after_student_insert`: Automatically creates a fee record when a new student is added.
+   - Retrieves the class fee from the `Classes` table based on the student's assigned class.
+   - Inserts a new record into the `Fees` table with the correct tuition fee.
+   - Sets the initial transport fee and other fees to 0.
+   - The total fee is then calculated by the existing triggers on the `Fees` table.
+
+2. `calculate_total_before_insert` and `calcualte_total_before_update`: Calculate total fee before inserting or updating fee records.
+3. `after_fees_insert`: Creates a payment record when a new fee is added.
+4. `after_fees_update`: Updates payment records when fees are modified.
+5. `before_payment_insert`: Calculates pending amounts considering previous unpaid fees.
+6. `paid_amount_update`: Updates pending amount when a payment is made.
+7. `after_payment_update`: Updates the paid status record after a payment is made or updated.
 
 These triggers ensure that all calculations are done automatically and consistently, reducing the chance of human error in fee management.
 

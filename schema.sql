@@ -4,6 +4,7 @@ CREATE TABLE Students(
     FirstName VARCHAR(20),
     LastName VARCHAR(20),
     DOB DATE,
+    Class VARCHAR(20, 2)
     PRIMARY KEY (StudentID)
 );
 
@@ -72,6 +73,12 @@ CREATE TABLE PaidStatus(
     FOREIGN KEY (StudentID) REFERENCES Students (StudentID)
 );
 
+Create TABLE Classes(
+    ClassID INT AUTO_INCREMENT,
+    ClassName VARCHAR(20),
+    ClassFee DECIMAL(10, 2),
+    PRIMARY KEY (ClassID)
+);
 
 /*
 CREATE TABLE TotalFee(
@@ -119,6 +126,29 @@ END;
 
 DELIMITER ;
 */
+
+
+DELIMITER //
+
+CREATE TRIGGER after_student_insert
+AFTER INSERT ON Students
+FOR EACH ROW
+BEGIN
+    DECLARE class_fee DECIMAL(10, 2);
+    
+    -- Get the fee for the student's class
+    SELECT ClassFee INTO class_fee
+    FROM Classes
+    WHERE ClassName = NEW.Class;
+    
+    -- Insert a new record into the Fees table
+    INSERT INTO Fees (StudentID, MonthYear, TutionFee, TransportFee, OtherFee, Total)
+    VALUES (NEW.StudentID, NEW.FeeStartDate, class_fee, 0, 0, class_fee);
+END;
+//
+
+DELIMITER ;
+
 
 -- trigger for calculating total in Fees table
 DELIMITER //
