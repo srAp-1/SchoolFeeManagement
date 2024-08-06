@@ -90,12 +90,13 @@ The system uses several triggers to automate calculations and updates:
    - Sets the initial transport fee and other fees to 0.
    - The total fee is then calculated by the existing triggers on the `Fees` table.
 
-2. `calculate_total_before_insert` and `calcualte_total_before_update`: Calculate total fee before inserting or updating fee records.
-3. `after_fees_insert`: Creates a payment record when a new fee is added.
-4. `after_fees_update`: Updates payment records when fees are modified.
-5. `before_payment_insert`: Calculates pending amounts considering previous unpaid fees.
-6. `paid_amount_update`: Updates pending amount when a payment is made.
-7. `after_payment_update`: Updates the paid status record after a payment is made or updated.
+2. `calculate_total_before_insert`:Calculate total fee before inserting.
+3. `calcualte_total_before_update`: Calculate total fee before updating fee records.
+4. `after_fees_insert`: Creates a payment record when a new fee is added.
+5. `after_fees_update`: Updates payment records when fees are modified.
+6. `before_payment_insert`: Calculates pending amounts considering previous unpaid fees.
+7. `paid_amount_update`: Updates pending amount when a payment is made.
+8. `after_payment_update`: Updates the paid status record after a payment is made or updated.
 
 These triggers ensure that all calculations are done automatically and consistently, reducing the chance of human error in fee management.
 
