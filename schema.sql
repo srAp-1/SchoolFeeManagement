@@ -4,7 +4,7 @@ CREATE TABLE Students(
     FirstName VARCHAR(20),
     LastName VARCHAR(20),
     DOB DATE,
-    Class VARCHAR(20, 2)
+    Class VARCHAR(20),
     PRIMARY KEY (StudentID)
 );
 
@@ -73,7 +73,7 @@ CREATE TABLE PaidStatus(
     FOREIGN KEY (StudentID) REFERENCES Students (StudentID)
 );
 
-Create TABLE Classes(
+CREATE TABLE Classes(
     ClassID INT AUTO_INCREMENT,
     ClassName VARCHAR(20),
     ClassFee DECIMAL(10, 2),
@@ -128,6 +128,10 @@ DELIMITER ;
 */
 
 
+SHOW TRIGGERS;
+
+DROP TRIGGER after_student_insert;
+
 DELIMITER //
 
 CREATE TRIGGER after_student_insert
@@ -140,10 +144,10 @@ BEGIN
     SELECT ClassFee INTO class_fee
     FROM Classes
     WHERE ClassName = NEW.Class;
-    
+
     -- Insert a new record into the Fees table
-    INSERT INTO Fees (StudentID, MonthYear, TutionFee, TransportFee, OtherFee, Total)
-    VALUES (NEW.StudentID, NEW.FeeStartDate, class_fee, 0, 0, class_fee);
+    INSERT INTO Fees (StudentID, TutionFee, TransportFee, OtherFee, Total)
+    VALUES (NEW.StudentID, class_fee, 0, 0, class_fee);
 END;
 //
 
