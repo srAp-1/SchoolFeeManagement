@@ -67,7 +67,7 @@ CREATE TABLE PaidStatus(
     StudentID INT,
     MonthYear DATE,
     Outstanding DECIMAL(10, 2),
-    LastPaid DECIMAL(10, 2),
+    Paid DECIMAL(10, 2),
     Pending DECIMAL(10, 2),
     PRIMARY KEY (PaymentID, StudentID),
     FOREIGN KEY (PaymentID) REFERENCES Payments (PaymentID),
@@ -290,18 +290,34 @@ CREATE TRIGGER after_payment_update
 AFTER UPDATE ON Payments
 FOR EACH ROW
 BEGIN
-    -- check if there's an existing record in for the same student
-    IF EXISTS(SELECT 1 FROM PaidStatus WHERE PaymentID = NEW.PaymentID AND StudentID = NEW.StudentID)
-    THEN UPDATE PaidStatus
-    SET Outstanding = NEW.AmountPending, LastPaid = NEW.AmountPaid,
-       Pending = GREATEST(NEW.AmountPending - NEW.AmountPaid, 0)
-    WHERE PaymentID = NEW.PaymentID and StudentID = NEW.StudentID;
+    DECLARE total_paid DECIMAL(10, 2);
+    DECLARE total_owed DECIMAL(10, 2);
+
+    -- Calculate the total amout paid by the student
+    SELECT COALESCE(SUM(AmountPaid), 0) INTO total_paid
+    FROM Payments
+    WHERE StudentID = NEW.StudentID;
+
+    -- Calculate the total amount owed by the student
+    SELECT COALESCE(SUM(TotalAmount), 0) INTO total_owed
+    FROM Payments
+    WHERE StudentID = NEW.StudentID;
+
+    -- Check if there's a existing record in PaidStatus for the same Student
+    IF EXISTS(SELECT 1 FROM PaidStatus WHERE PaymentID = NEW.PaymentID AND StudentID = NEW.StudentID) THEN
+        UPDATE PaidStatus
+        SET Outstanding = total_owed,
+            Paid = total_paid,
+            Pending = GREATEST(total_owed - total_paid, 0)
+        WHERE PaymentID = NEW.PaymentID AND StudentID = NEW.StudentID;
     ELSE
-        -- insert new if the student does not exist
-        INSERT INTO PaidStatus(PaymentID, StudentID, MonthYear, Outstanding, LastPaid, Pending)
-        VALUES(NEW.PaymentID, NEW.StudentID, NEW.MonthYear, NEW.AmountPending, NEW.AmountPaid, GREATEST(NEW.AmountPending - NEW.AmountPaid, 0));
+        -- Insert new record if the student does not exist in PaidStatus
+        INSERT INTO PaidStatus(PaymentID, StudentID, MonthYear, Outstanding, Paid, Pending)
+        VALUES(NEW.PaymentID, NEW.StudentID, NEW.MonthYear, total_owed, total_paid, GREATEST(total_owed - total_paid, 0));
     END IF;
 END;
 //
 
-DELIMITER ;
+DELIMITER;
+
+
