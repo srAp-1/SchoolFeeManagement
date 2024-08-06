@@ -76,13 +76,13 @@ SELECT * FROM Classes;
 SELECT * FROM Fees;
 SELECT * FROM Students;
 SELECT * FROM Parents;
-SELECT * FROM Transports;;
+SELECT * FROM Transports;
 SELECT * FROM Payments;
 SELECT * FROM PaidStatus;
 
 
 -- Delete Tables
-
+DROP TABLE Classes;
 DROP TABLE Fees;
 DROP TABLE Payments;
 DROP TABLE Students;
@@ -95,7 +95,7 @@ DROP TABLE PaidStatus;
 -- Triggers
 
 SHOW TRIGGERS;
-
+DROP TRIGGER after_student_insert;
 DROP TRIGGER calculate_total_before_insert;
 DROP TRIGGER after_fees_insert;
 DROP TRIGGER calcualte_total_before_update;
@@ -148,9 +148,15 @@ ALTER TABLE Payments
 ADD COLUMN Discount DECIMAL(10, 2) DEFAULT 0 AFTER TotalAmount;
 
 ALTER TABLE Students
-ADD COLUMN Class VARCHAR(20);
+DROP COLUMN Class;
 
+ALTER TABLE Students
+ADD COLUMN ClassID INT;
 
+ALTER TABLE Students
+ADD FOREIGN KEY (ClassID) REFERENCES Classes (ClassID);
+
+ALTER TABLE Students
 
 SHOW ERRORS;
 
