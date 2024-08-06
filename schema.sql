@@ -4,8 +4,9 @@ CREATE TABLE Students(
     FirstName VARCHAR(20),
     LastName VARCHAR(20),
     DOB DATE,
-    Class VARCHAR(20),
-    PRIMARY KEY (StudentID)
+    ClassID INT,
+    PRIMARY KEY (StudentID),
+    FOREIGN KEY (ClassID) REFERENCES Classes (ClassID)
 );
 
 -- Parents 
@@ -128,10 +129,6 @@ DELIMITER ;
 */
 
 
-SHOW TRIGGERS;
-
-DROP TRIGGER after_student_insert;
-
 DELIMITER //
 
 CREATE TRIGGER after_student_insert
@@ -143,7 +140,7 @@ BEGIN
     -- Get the fee for the student's class
     SELECT ClassFee INTO class_fee
     FROM Classes
-    WHERE ClassName = NEW.Class;
+    WHERE ClassID = NEW.ClassID;
 
     -- Insert a new record into the Fees table
     INSERT INTO Fees (StudentID, TutionFee, TransportFee, OtherFee, Total)
