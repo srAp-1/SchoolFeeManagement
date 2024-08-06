@@ -2,6 +2,11 @@
 
 This is a MySQL database schema for a comprehensive school fee management system. It helps track student information, fees, payments, and transportation details.
 
+## Entity Relationship Diagram
+
+![School Fee Management System ER Diagram](FeeERD.png)
+*Figure 1: Entity Relationship Diagram for the School Fee Management System*
+
 ## Tables
 
 7. **Classes**: Stores information about different classes and their associated fees.
