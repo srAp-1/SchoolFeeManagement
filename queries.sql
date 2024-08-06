@@ -1,6 +1,9 @@
 -- WE CANNOT TRUNCATE A TABLE TAHT HAS FK CONSTRAINTS APPLIED ON IT
+
+-- View Databases
 SHOW DATABASES;
 
+-- Select Database
 USE schoolmanagement;
 
 SHOW TABLES;
@@ -18,7 +21,7 @@ VALUES('Class101', 350),
         ('Class104', 550),
         ('Class105', 600);
 
--- VALUER FOR STUDENT TABLE
+-- Records for Students Table
 INSERT INTO Students (FirstName, LastName, DOB, Class)
 VALUES ('Hans Raj', 'Sahoo', '2018-02-23', 'Class101'),
         ('Kartik', 'Malik', '2018-01-12', 'Class101'),
@@ -34,7 +37,7 @@ VALUES ('Hans Raj', 'Sahoo', '2018-02-23', 'Class101'),
         ('Sudipt', 'Jena', '2020-10-07', 'Class105'),
         ('Sai Subham', 'Biswal', '2018-11-21', 'Class105');
 
--- FEE TABLE
+-- Records for Fees Table
 INSERT INTO Fees (StudentID, MonthYear, TutionFee, TransportFee, OtherFee)
 VALUES (1, '2022-04-15', 300, 450, 0);
 
@@ -53,12 +56,11 @@ VALUES (2, '2022-02-14', 300, 0, 0),
         (13, '2022-4-16',300, 0, 0);
 
 
-
-
 UPDATE Fees SET OtherFee = 150 WHERE StudentID = 1;
 
 
 -- Payment Table
+
 UPDATE Payments SET MonthYear = '2022-04-15', AmountPaid = 700  WHERE StudentID = 1;
 UPDATE Payments SET Discount = 200 WHERE StudentID = 1;
 
@@ -69,17 +71,18 @@ DESCRIBE Payments;
 
 
 -- Show Tables
+
 SELECT * FROM Classes;
 SELECT * FROM Fees;
 SELECT * FROM Students;
 SELECT * FROM Parents;
-SELECT * FROM Teachers;
-SELECT * FROM Transport;
+SELECT * FROM Transports;;
 SELECT * FROM Payments;
 SELECT * FROM PaidStatus;
--- SELECT * FROM TotalFee;
+
 
 -- Delete Tables
+
 DROP TABLE Fees;
 DROP TABLE Payments;
 DROP TABLE Students;
@@ -88,7 +91,9 @@ DROP TABLE Teachers;
 DROP TABLE Transports;
 DROP TABLE PaidStatus;
 
+
 -- Triggers
+
 SHOW TRIGGERS;
 
 DROP TRIGGER calculate_total_before_insert;
@@ -99,25 +104,31 @@ DROP TRIGGER before_payment_insert;
 DROP TRIGGER paid_amount_update;
 DROP TRIGGER after_payment_update;
 
+
+-- Truncate Table
+
+TRUNCATE TABLE Classes;
 TRUNCATE TABLE Students;
 TRUNCATE TABLE Fees;
 TRUNCATE TABLE Payments;
 TRUNCATE TABLE PaidStatus;
 
-SET foreign_key_checks = 0;
-, 'Class101'
 
+-- Enable or Disable Foreign Key
+
+SET foreign_key_checks = 0;
+SET foreign_key_checks = 1;
+
+
+-- Delete Queries
 
 DELETE FROM Students;
-
 DELETE FROM Payments WHERE StudentID = 1;
 DELETE FROM Fees WHERE StudentID = 1;
 DELETE FROM PaidStatus WHERE StudentID = 1;
 
-DROP TRIGGER calculate_total_fee;
 
-
--- modification
+-- Modification
 
 ALTER TABLE Fees AUTO_INCREMENT = 1;
 
@@ -139,7 +150,7 @@ ADD COLUMN Discount DECIMAL(10, 2) DEFAULT 0 AFTER TotalAmount;
 ALTER TABLE Students
 ADD COLUMN Class VARCHAR(20);
 
- 
+
 
 SHOW ERRORS;
 
