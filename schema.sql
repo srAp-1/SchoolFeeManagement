@@ -1,3 +1,6 @@
+CREATE INDEX idx_lastname ON Students (LastName);
+CREATE INDEX idx_fees_month_year ON Fees (MonthYear);
+
 -- Student Table
 CREATE TABLE Students(
     StudentID INT AUTO_INCREMENT,
@@ -80,6 +83,21 @@ CREATE TABLE Classes(
     ClassFee DECIMAL(10, 2),
     PRIMARY KEY (ClassID)
 );
+
+
+-- VIEWS
+
+-- StudentDetailsView
+CREATE VIEW StudentDetailsView AS
+SELECT 
+    s.StudentID, s.FirstName, s.LastName, s.DOB,
+    c.ClassName,
+    p.FatherName, P.MotherName, p.Phone1, p.Phone2, P.Address
+FROM 
+    Students s
+    LEFT JOIN Classes c ON s.ClassID = c.ClassID
+    LEFT JOIN Parents p ON s.StudentID = p.StudentID;
+
 
 /*
 CREATE TABLE TotalFee(
