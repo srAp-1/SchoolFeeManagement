@@ -1,7 +1,7 @@
 CREATE INDEX idx_lastname ON Students (LastName);
 CREATE INDEX idx_fees_month_year ON Fees (MonthYear);
 
--- Student Table
+-- Students Table
 CREATE TABLE Students(
     StudentID INT AUTO_INCREMENT,
     FirstName VARCHAR(20),
@@ -12,7 +12,7 @@ CREATE TABLE Students(
     FOREIGN KEY (ClassID) REFERENCES Classes (ClassID)
 );
 
--- Parents 
+-- Parent Table
 CREATE TABLE Parents(
     ParentID INT AUTO_INCREMENT,
     StudentID INT,
@@ -25,7 +25,7 @@ CREATE TABLE Parents(
     FOREIGN KEY (StudentID) REFERENCES Students (StudentID)
 );
 
--- Transport 
+-- Transports Table
 CREATE TABLE Transports(
     TransportID INT AUTO_INCREMENT,
     StudentID INT,
@@ -36,7 +36,7 @@ CREATE TABLE Transports(
     FOREIGN KEY (StudentID) REFERENCES Students (StudentID)
 );
 
--- Default Fees 
+-- Default Fees Table
 CREATE TABLE Fees(
     FeeID INT AUTO_INCREMENT,
     StudentID INT,
@@ -49,7 +49,7 @@ CREATE TABLE Fees(
     FOREIGN KEY (StudentID) REFERENCES Students (StudentID)
 );
 
--- Payment 
+-- Payment Table
 CREATE TABLE Payments(
     PaymentID INT AUTO_INCREMENT,
     FeeID INT NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE Payments(
     FOREIGN KEY (FeeID) REFERENCES Fees (FeeID)
 );
 
--- Paid status Table
+-- Paid Status Table
 CREATE TABLE PaidStatus(
     PaymentID INT,
     StudentID INT,
@@ -77,6 +77,7 @@ CREATE TABLE PaidStatus(
     FOREIGN KEY (StudentID) REFERENCES Students (StudentID)
 );
 
+-- Classes Table
 CREATE TABLE Classes(
     ClassID INT AUTO_INCREMENT,
     ClassName VARCHAR(20),
@@ -99,54 +100,9 @@ FROM
     LEFT JOIN Parents p ON s.StudentID = p.StudentID;
 
 
-/*
-CREATE TABLE TotalFee(
-    StudentID INT,
-    FeeID INT,
-    Total DECIMAL(10, 2) DEFAULT 0,
-    PRIMARY KEY (StudentID),
-    FOREIGN KEY (StudentID) REFERENCES Students (StudentID),
-    FOREIGN KEY (FeeID) REFERENCES Fees (FeeID) 
-);
-*/
-/*
--- PaidAmount Table
-CREATE TABLE PaidAmount(
-    FeeID INT NOT NULL,
-    StudentID INT NOT NULL,
-    PaymentID INT NOT NULL,
-    AmountPaid DECIMAL(10, 2) DEFAULT 0,
-    PRIMARY KEY(StudentID,FeeID)
-    FOREIGN KEY (FeeID) REFERENCES Fees (FeeID),
-    FOREIGN KEY (StudentID) REFERENCES Students (StudentID)
-);
-*/
+-- TRIGGERS
 
--- trigger for caluculating total fee
-/*
-DELIMITER //
-
-CREATE TRIGGER calculate_total_fee
-AFTER INSERT ON Fees
-FOR EACH ROW
-BEGIN
-    
-    IF EXISTS (SELECT 1 FROM TotalFee WHERE StudentID = NEW.StudentID AND FeeID = NEW.FeeID) THEN
-        UPDATE TotalFee
-        SET Total = NEW.TutionFee + NEW.TransportFee + NEW.OtherFee
-        WHERE StudentID = NEW.StudentID AND FeeID = NEW.FeeID;
-    ELSE
-        INSERT INTO TotalFee (Student, FeeID, Total)
-        VALUES (NEW.StudentID, NEW.FeeID, NEW.TutionFee + NEW.TransportFee + NEW.OtherFee)
-    END IF;
-
-END;
-//
-
-DELIMITER ;
-*/
-
-
+-- Trigger for Fetch class fee from classes table
 DELIMITER //
 
 CREATE TRIGGER after_student_insert
@@ -169,7 +125,7 @@ END;
 DELIMITER ;
 
 
--- trigger for calculating total in Fees table
+-- Trigger for calculating total in Fees table
 DELIMITER //
 
 CREATE TRIGGER calculate_total_before_insert
@@ -218,23 +174,6 @@ END;
 
 DELIMITER ;
 
--- trigger for if amount is paid
-/*
-DELIMITER //
-
-CREATE TRIGGER paid_amount_insert
-AFTER INSERT ON Payments
-FOR EACH ROW
-BEGIN
-    UPDATE Payments
-    SET AmountPending = AmountPending - NEW.AmountPaid
-    WHERE FeeID = New.FeeID;
-END;
-//
-
-DELIMITER;
-*/
-
 
 -- Trigger to update when amount is paid
 DELIMITER //
@@ -250,34 +189,7 @@ END;
 DELIMITER ;
 
 
-/*
--- calculate amount pending previous months
-DELIMITER //
-
-CREATE TRIGGER before_payment_insert
-BEFORE INSERT ON Payments
-FOR EACH ROW
-BEGIN
-    DECLARE last_amount_pending DECIMAL(10, 2) DEFAULT 0;
-    DECLARE last_total_amount DECIMAL(10, 2) DEFAULT 0;
-    DECLARE last_amount_paid DECIMAL(10, 2) DEFAULT 0;
-
-    -- get last payments for the student
-    SELECT AmountPending, TotalAmount, AmountPaid
-    INTO last_amount_pending, last_total_amount, last_amount_paid
-    FROM Payments
-    WHERE StudentId = NEW.StudentID
-    ORDER BY MonthYear DESC
-    LIMIT 1;
-
-    SET NEW.AmountPending = GREATEST((last_amount_pending + last_total_amount - last_amount_paid) + NEW.TotalAmount - NEW.AmountPaid - NEW.Discount, 0);
-END;
-//
-
-DELIMITER ;
-*/
-
--- calculate PendingAmount previous month add and show it in Current PendingAmount
+-- Trigger ot calculate PendingAmount previous month add and show it in Current PendingAmount
 DELIMITER //
 
 CREATE TRIGGER before_payment_insert
@@ -301,7 +213,7 @@ END;
 DELIMITER ;
 
 
--- trigger to update and insert PaidStatus
+-- Trigger to update and insert PaidStatus
 DELIMITER //
 
 CREATE TRIGGER after_payment_update
@@ -337,5 +249,4 @@ END;
 //
 
 DELIMITER;
-
 
